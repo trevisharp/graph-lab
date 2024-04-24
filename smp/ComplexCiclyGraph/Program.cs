@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using static System.Console;
 
 using GraphLab;
 
@@ -12,6 +11,6 @@ var v1 = cyclePrim.GetRandomVertex();
 var v2 = cyclePrim.GetRandomVertex();
 cyclePrim.Connect(v1, v2);
 
-Console.WriteLine(graph.SearchCycle());
-Console.WriteLine(prim.SearchCycle());
-Console.WriteLine(cyclePrim.SearchCycle());
+WriteLine(graph.SearchCycle());
+WriteLine(prim.SearchCycle());
+WriteLine(cyclePrim.SearchCycle());
