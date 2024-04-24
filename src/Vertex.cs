@@ -16,8 +16,8 @@ public struct Vertex
     }
 
     public readonly int Id;
-    private readonly List<Edge> inEdges;
-    private readonly List<Edge> outEdges;
+    internal readonly List<Edge> inEdges;
+    internal readonly List<Edge> outEdges;
     public IEnumerable<Edge> InEdges
     {
         get

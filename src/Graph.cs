@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Collections.Generic;
 
 namespace GraphLab;
@@ -8,10 +9,10 @@ namespace GraphLab;
 /// </summary>
 public class Graph
 {
-    private Dictionary<int, LinkedListNode<int>> edgeSet = [];
-    private Dictionary<int, LinkedListNode<int>> vertexSet = [];
-    private LinkedList<int> edges = [];
-    private LinkedList<int> vertexs = [];
+    private Dictionary<int, LinkedListNode<Edge>> edgeSet = [];
+    private Dictionary<int, LinkedListNode<Vertex>> vertexSet = [];
+    private LinkedList<Edge> edges = [];
+    private LinkedList<Vertex> vertexs = [];
 
     /// <summary>
     /// Return true if graph contains a edge.
@@ -38,12 +39,12 @@ public class Graph
     /// <summary>
     /// Add a existing vertex to Graph.
     /// </summary>
-    public Edge AddEdge(Edge vertex)
+    public Edge AddEdge(Edge edge)
     {
-        var id = vertex.Id;
-        var node = this.edges.AddLast(id);
+        var id = edge.Id;
+        var node = this.edges.AddLast(edge);
         this.edgeSet.Add(id, node);
-        return vertex;
+        return edge;
     }
 
     /// <summary>
@@ -64,9 +65,69 @@ public class Graph
     public Vertex AddVertex(Vertex vertex)
     {
         var id = vertex.Id;
-        var node = this.vertexs.AddLast(id);
+        var node = this.vertexs.AddLast(vertex);
         this.vertexSet.Add(id, node);
         return vertex;
+    }
+
+    /// <summary>
+    /// Copy the Graph data
+    /// </summary>
+    public Graph Clone()
+    {
+        var graph = new Graph();
+
+        foreach (var vertex in this.vertexs)
+            graph.AddVertex(vertex);
+        
+        foreach (var edge in this.edges)
+            graph.AddEdge(edge);
+        
+        return graph;
+    }
+
+    /// <summary>
+    /// Execute Prim's algorithm getting a minimal minimum spanning tree.
+    /// </summary>
+    /// <returns>A clone of original graph with Prim's aplied.</returns>
+    public Graph Prim()
+    {
+        var graph = new Graph();
+        int missing = this.vertexs.Count;
+        if (missing == 0)
+            return graph;
+
+        var first = this.vertexs.First.Value;
+        graph.AddVertex(first);
+        missing--;
+
+        PriorityQueue<Edge, float> queue = new();
+        foreach (var edge in first.outEdges)
+            if (Contains(edge))
+                queue.Enqueue(edge, edge.Cost);
+
+        while (missing > 0)
+        {
+            if (queue.Count == 0)
+                break; 
+            var edge = queue.Dequeue();
+
+            if (!Contains(edge.To))
+                continue;
+            
+            if (graph.Contains(edge.To))
+                continue;
+            
+            missing--;
+            graph.AddEdge(edge);
+            graph.AddVertex(edge.To);
+
+            foreach (var newEdge in edge.To.outEdges)
+                if (Contains(newEdge))
+                    queue.Enqueue(newEdge, newEdge.Cost);
+        }
+
+        return graph;
     }
 
     /// <summary>
