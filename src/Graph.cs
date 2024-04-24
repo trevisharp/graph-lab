@@ -1,5 +1,4 @@
 using System;
-using System.Linq;
 using System.Collections.Generic;
 
 namespace GraphLab;
@@ -13,6 +12,30 @@ public class Graph
     private Dictionary<int, LinkedListNode<Vertex>> vertexSet = [];
     private LinkedList<Edge> edges = [];
     private LinkedList<Vertex> vertexs = [];
+
+    /// <summary>
+    /// Get the vertex collection of this Graph.
+    /// </summary>
+    public IEnumerable<Vertex> Vertexes
+    {
+        get
+        {
+            foreach (var vertex in this.vertexs)
+                yield return vertex;
+        }
+    }
+    
+    /// <summary>
+    /// Get the edge collection of this Graph.
+    /// </summary>
+    public IEnumerable<Edge> Edges
+    {
+        get
+        {
+            foreach (var edge in this.edges)
+                yield return edge;
+        }
+    }
 
     /// <summary>
     /// Return true if graph contains a edge.
@@ -68,6 +91,18 @@ public class Graph
         var node = this.vertexs.AddLast(vertex);
         this.vertexSet.Add(id, node);
         return vertex;
+    }
+
+    /// <summary>
+    /// Get a Random Vertex from Graph.
+    /// </summary>
+    public Vertex GetRandomVertex()
+    {
+        var index = Random.Shared.Next(this.vertexs.Count);
+        var crr = this.vertexs.First;
+        for (int i = 0; i < index; i++)
+            crr = crr.Next;
+        return crr.Value;
     }
 
     /// <summary>
@@ -128,6 +163,51 @@ public class Graph
         }
 
         return graph;
+    }
+
+    /// <summary>
+    /// Search and return true if this graph has a cycle.
+    /// </summary>
+    /// <returns></returns>
+    public bool SearchCycle()
+    {
+        int missing = this.vertexs.Count;
+        if (missing == 0)
+            return false;
+
+        HashSet<Vertex> hash = [];
+        var first = this.vertexs.First.Value;
+        hash.Add(first);
+        missing--;
+
+        Queue<Edge> queue = new();
+        foreach (var edge in first.outEdges)
+            if (Contains(edge))
+                queue.Enqueue(edge);
+
+        while (missing > 0)
+        {
+            if (queue.Count == 0)
+                break; 
+            var edge = queue.Dequeue();
+
+            if (!Contains(edge.To))
+                continue;
+            
+            if (hash.Contains(edge.To))
+                return true;
+            
+            missing--;
+            hash.Add(edge.To);
+
+            foreach (var newEdge in edge.To.outEdges)
+                if (Contains(newEdge))
+                    queue.Enqueue(newEdge);
+        }
+
+        return false;
+
+
     }
 
     /// <summary>
