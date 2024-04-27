@@ -2,6 +2,8 @@
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
+    <PackageVersion>1.0.0</PackageVersion>
+    <Authors>Leonardo Trevisan Silio</Authors>
   </PropertyGroup>
 
 </Project>
