@@ -243,13 +243,6 @@ public class Graph
                     mat[lineStart + i + 1],
                     costFunction(i, j, i + 1, j)
                 );
-                
-                int end = n - 1;
-                graph.BiConnect(
-                    mat[lineStart + end - i],
-                    mat[lineStart + end - i - 1],
-                    costFunction(end - i, j, end - i - 1, j)
-                );
             }
         }
 
@@ -257,17 +250,10 @@ public class Graph
         {
             for (int j = 0; j < m - 1; j++)
             {
-                int end = m - 1;
                 graph.BiConnect(
                     mat[j * n + i],
                     mat[(j + 1) * n + i],
                     costFunction(i, j, i, j + 1)
-                );
-                
-                graph.BiConnect(
-                    mat[(end - j) * n + i],
-                    mat[(end - j - 1) * n + i],
-                    costFunction(i, end - j, i, end - j - 1)
                 );
             }
         }
